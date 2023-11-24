@@ -10,6 +10,7 @@ import {
 
 interface ModalProps {
   title: string;
+  label: string;
   description: string;
   isOpen: boolean;
   onClose: () => void;
@@ -35,6 +36,7 @@ export const Modal: React.FC<ModalProps> = ({
     description,
     isOpen,
     onClose,
+    label,
     children,
 }) => {
     /**
@@ -52,6 +54,7 @@ export const Modal: React.FC<ModalProps> = ({
             <DialogContent>
                 <DialogHeader>
                     <DialogTitle>{title}</DialogTitle>
+                    <h2>{label}</h2>
                     <DialogDescription>{description}</DialogDescription>
                 </DialogHeader>
                 <div>{children}</div>
