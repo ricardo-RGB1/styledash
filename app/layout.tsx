@@ -20,10 +20,11 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="en">
-        <body className={inter.className}>{children}</body>
-        <ToastProvider />
-        {/* show the store modal at the beginning  */}
-        <ModalProvider />
+        <body className={inter.className}>
+          <ToastProvider />
+          <ModalProvider />  {/* show the store modal at the beginning  */}
+          {children}
+        </body>
       </html>
     </ClerkProvider>
   );

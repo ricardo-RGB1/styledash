@@ -37,8 +37,6 @@ export const StoreModal = () => {
      const response = await axios.post('/api/stores', values); //  The values object is sent as the request body so we can extract the name value from it.
 
       window.location.assign(`/${response.data.id}`); // Redirect to the store page.
-   
-      toast.success('Store created successfully');
     } catch (error) {
       toast.error('Something went wrong');
     } finally {

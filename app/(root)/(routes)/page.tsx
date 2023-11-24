@@ -3,7 +3,6 @@
 import { useStoreModal } from "@/hooks/use-store-modal";
 import { useEffect } from "react";
 
-
 /**
  * Renders the setup page component.
  * Opens the modal if it is not already open.
@@ -18,13 +17,9 @@ const SetupPage = () => {
     }
   }, [isOpen, onOpen]);
 
-  return (
-    <div className="p-4">
-      Root page
-    </div>
-  );
+  // The SetupPage component returns null, which means that nothing is rendered, it only opens the modal.
+  return null 
 }
- 
 export default SetupPage;
 
 
