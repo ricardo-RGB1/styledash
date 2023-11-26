@@ -8,7 +8,8 @@ import { Button } from "@/components/ui/button";
 import Heading from "@/components/ui/heading";
 import { Separator } from "@/components/ui/separator";
 import { AlertModal } from "@/components/modals/alert-modal";
-import { ApiAlert } from "@/components/ui/api-alert";
+import ImageUpload from "@/components/ui/image-upload";
+
 import { Input } from "@/components/ui/input";
 import { useOrigin } from "@/hooks/use-origin";
 
@@ -19,7 +20,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
   FormControl,
-  FormField, 
+  FormField,
   FormItem,
   FormLabel,
   FormMessage,
@@ -39,17 +40,15 @@ const formSchema = z.object({
 // Infer the type of the form values
 type BillboardFormValues = z.infer<typeof formSchema>;
 
-
-
 /**
  * A form component for managing settings of a store.
  * @component
  * @param {BillboardFormProps} props - The component props.
- * @param {Store} props.initialBillboard - The initial store object.
+ * @param {Store} props.initialBillboard - The initial billboard object.
  * @returns {JSX.Element} The rendered component.
  */
 const BillboardForm: React.FC<BillboardFormProps> = ({
-  initialBillboard,
+  initialBillboard, 
 }: BillboardFormProps): JSX.Element => {
   const params = useParams();
   const router = useRouter();
@@ -58,6 +57,16 @@ const BillboardForm: React.FC<BillboardFormProps> = ({
   const [open, setOpen] = useState(false); // Whether the delete modal is open
   const [loading, setLoading] = useState(false); // Whether the form is loading
 
+  // Add title, description, and separator
+  const title = initialBillboard ? "Update billboard" : "Create billboard";
+  const description = initialBillboard
+    ? "Edit your billboard"
+    : "Add a new billboard";
+  const toastMessage = initialBillboard
+    ? "Billboard updated."
+    : "Billboard created!";
+  const action = initialBillboard ? "Save" : "Create";
+
   /**
    * The form object used for managing settings form data.
    * @template T - The type of the form values.
@@ -65,41 +74,50 @@ const BillboardForm: React.FC<BillboardFormProps> = ({
   const form = useForm<BillboardFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: initialBillboard || {
-      label: '',
-      imageUrl: '',
-    }
+      label: "",
+      imageUrl: "",
+    },
   });
 
+
+
   /**
-   * Handles the form submission for updating store settings.
-   * @param values - The values from the settings form.
+   * Handles the form submission for creating or updating a billboard.
+   * 
+   * @param values - The form values containing the billboard data.
    */
   const onSubmit = async (values: BillboardFormValues) => {
     try {
       setLoading(true);
-      await axios.patch(`/api/stores/${params.storeId}`, values);
-      router.refresh(); // Refresh the page to get the latest data
-      toast.success("Store name updated! ");
-    } catch (error) {
+      if (initialBillboard) { 
+        await axios.patch(`/api/${params.storeId}/billboards/${params.billboardId}`, values); 
+      } else {
+        await axios.post(`/api/${params.storeId}/billboards`, values);
+      } 
+      router.refresh();
+      router.push(`/${params.storeId}/billboards`); // Redirect to the billboards page
+      toast.success(toastMessage);
+    } catch (error) { 
       toast.error("Something went wrong.");
     } finally {
       setLoading(false);
     }
   };
 
+
   /**
-   * Deletes the store with the specified storeId.
-   * @returns {Promise<void>} A promise that resolves when the store is successfully deleted.
+   * Deletes a billboard from the store.
+   * @returns A promise that resolves when the billboard is successfully deleted.
    */
   const deleteStore = async (): Promise<void> => {
     try {
       setLoading(true);
-      await axios.delete(`/api/stores/${params.storeId}`); // Make a DELETE request to the API
+      await axios.delete(`/api/${params.storeId}/billboards/${params.billboardId}`); 
       router.refresh(); // Refresh the page to get the latest data
       router.push("/"); // Redirect to the home page
-      toast.success("Store deleted!");
+      toast.success("Billboard deleted!");
     } catch (error) {
-      toast.error("Make sure you removed all products and categories first.");
+      toast.error("Make sure you removed all categories first.");
     } finally {
       setLoading(false);
       setOpen(false); // Close the modal
@@ -118,19 +136,20 @@ const BillboardForm: React.FC<BillboardFormProps> = ({
         loading={loading}
       />
       <div className="flex items-center justify-between">
-        <Heading
-          title="Settings Title"
-          description="Manage store preferences"
-        />
-        <Button
-          disabled={loading}
-          onClick={() => setOpen(true)}
-          size="icon"
-          variant="destructive"
-        >
-          <Trash className="w-4 h-4" />
-        </Button>
+        <Heading title={title} description={description} />
+
+        {initialBillboard && ( // Only show the delete button if the store exists
+          <Button
+            disabled={loading}
+            onClick={() => setOpen(true)}
+            size="icon"
+            variant="destructive"
+          >
+            <Trash className="w-4 h-4" />
+          </Button>
+        )}
       </div>
+
       <Separator />
       {/* Add form here */}
       <Form {...form}>
@@ -138,17 +157,37 @@ const BillboardForm: React.FC<BillboardFormProps> = ({
           onSubmit={form.handleSubmit(onSubmit)}
           className="space-y-8 w-full"
         >
+          {" "}
+          <FormField
+            control={form.control}
+            name="imageUrl"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Background image</FormLabel>
+                <FormControl>
+                  <ImageUpload
+                    {...field}
+                    disabled={loading}
+                    onChange={(url) => field.onChange(url)} // Update the value
+                    onRemove={() => field.onChange("")} // Clear the value
+                    value={field.value ? [field.value] : []} // Convert the value to an array
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
           <div className="grid grid-cols-3 gap-8">
             <FormField
               control={form.control}
               name="label"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Name</FormLabel>
+                  <FormLabel>Label</FormLabel>
                   <FormControl>
                     <Input
                       {...field}
-                      placeholder="Enter store name"
+                      placeholder="Enter a billboard label"
                       disabled={loading}
                     />
                   </FormControl>
@@ -158,16 +197,11 @@ const BillboardForm: React.FC<BillboardFormProps> = ({
             />
           </div>
           <Button disabled={loading} type="submit" className="ml-auto">
-            Save
+            {action}
           </Button>
         </form>
       </Form>
       <Separator />
-      <ApiAlert
-        title="NEXT_PUBLIC_API_URL"
-        description={`${origin}/api/stores/${params.storeId}}`}
-        variant="public"
-      />
     </>
   );
 };

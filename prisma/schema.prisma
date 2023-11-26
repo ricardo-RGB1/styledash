@@ -16,7 +16,7 @@ model Store {
   id              String    @id @default(uuid())
   name            String
   userId          String
-  billboards      Billboard[] @relation("StoreToBillboard")
+  billboards      Billboard[] @relation("StoreToBillboard") 
   // categories      Category[] @relation("StoreToCategory")
   // products        Product[]  @relation("StoreToProduct")
   // sizes           Size[]     @relation("StoreToSize")
@@ -29,7 +29,7 @@ model Store {
 
 model Billboard {
   id              String    @id @default(uuid())
-  storeId         String
+  storeId         String 
   store           Store     @relation("StoreToBillboard", fields: [storeId], references: [id])
   label           String 
   imageUrl        String

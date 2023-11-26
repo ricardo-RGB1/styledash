@@ -22,7 +22,7 @@ export async function PATCH(
     const { name } = body; 
 
     if (!userId) {
-      return new NextResponse("Unauthenticated", { status: 403 });
+      return new NextResponse("Unauthenticated", { status: 401 });
     }
 
     if (!name) {

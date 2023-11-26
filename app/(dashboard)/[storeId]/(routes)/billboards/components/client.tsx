@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import Heading from "@/components/ui/heading";
 import { Separator } from "@/components/ui/separator";
 
- 
+
 
 const BillboardClient = () => {
     const params = useParams();
