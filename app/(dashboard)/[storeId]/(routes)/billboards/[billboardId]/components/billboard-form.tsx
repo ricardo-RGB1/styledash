@@ -11,7 +11,7 @@ import { AlertModal } from "@/components/modals/alert-modal";
 import ImageUpload from "@/components/ui/image-upload";
 
 import { Input } from "@/components/ui/input";
-import { useOrigin } from "@/hooks/use-origin";
+
 
 import { Billboard } from "@prisma/client";
 import { Trash } from "lucide-react";
@@ -52,7 +52,7 @@ const BillboardForm: React.FC<BillboardFormProps> = ({
 }: BillboardFormProps): JSX.Element => {
   const params = useParams();
   const router = useRouter();
-  const origin = useOrigin();
+ 
 
   const [open, setOpen] = useState(false); // Whether the delete modal is open
   const [loading, setLoading] = useState(false); // Whether the form is loading
@@ -111,7 +111,7 @@ const BillboardForm: React.FC<BillboardFormProps> = ({
    */
   const deleteStore = async (): Promise<void> => {
     try {
-      setLoading(true);
+      setLoading(true); 
       await axios.delete(`/api/${params.storeId}/billboards/${params.billboardId}`); 
       router.refresh(); // Refresh the page to get the latest data
       router.push("/"); // Redirect to the home page
