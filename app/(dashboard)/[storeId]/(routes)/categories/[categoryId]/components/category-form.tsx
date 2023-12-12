@@ -71,7 +71,7 @@ const CategoryForm: React.FC<CategoryFormProps> = ({
   const description = initialCategory
     ? "Edit your Category"
     : "Add a new Category";
-  const toastMessage = initialCategory
+  const toastMessage = initialCategory // The toast message to display
     ? "Category updated."
     : "Category created!";
   const action = initialCategory ? "Save" : "Create";

@@ -8,7 +8,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { CategoryColumn } from "./columns";
+import { BillboardColumn } from "./columns";
 import { toast } from "react-hot-toast";
 import { Button } from "@/components/ui/button";
 import { Copy, Edit, MoreHorizontal, Trash } from "lucide-react";
@@ -16,17 +16,11 @@ import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import { AlertModal } from "@/components/modals/alert-modal";
 
-
-
-
-/**
- * Props for the CellAction component.
- */
 interface CellActionProps {
-  data: CategoryColumn;
+  data: BillboardColumn;
 }
 
-// The CellAction component will be used in the columns.tsx file and function as a button to edit the category.
+// The CellAction component will be used in the columns.tsx file and function as a button to edit the billboard.
 export const CellAction: React.FC<CellActionProps> = ({ data }) => {
 
     const router = useRouter();
@@ -38,17 +32,17 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
 
     const onCopy = (id: string) => {
         navigator.clipboard.writeText(id); 
-        toast.success('Category id copied to clipboard.');
+        toast.success('Billboard id copied to clipboard.');
     }
 
     const deleteStore = async (): Promise<void> => {
         try {
           setLoading(true); 
-          await axios.delete(`/api/${params.storeId}/categories/${data.id}`); 
+          await axios.delete(`/api/${params.storeId}/billboards/${data.id}`); 
           router.refresh(); // Refresh the page to get the latest data
-          toast.success("category deleted!");
+          toast.success("Billboard deleted!");
         } catch (error) {
-          toast.error("Make sure you removed all products using this category first.");
+          toast.error("Make sure you removed all categories first.");
         } finally {
           setLoading(false);
           setOpen(false); // Close the modal
@@ -78,7 +72,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
               <Copy className="mr-2 h-4 w-4" />
               Copy
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => router.push(`/${params.storeId}/categories/${data.id}`) }>
+            <DropdownMenuItem onClick={() => router.push(`/${params.storeId}/billboards/${data.id}`) }>
               <Edit className="mr-2 h-4 w-4" />
               Update
             </DropdownMenuItem>
