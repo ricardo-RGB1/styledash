@@ -107,6 +107,7 @@ const CategoryForm: React.FC<CategoryFormProps> = ({
       router.refresh();
       router.push(`/${params.storeId}/categories`); // Redirect to the categories page
       toast.success(toastMessage);
+      router.refresh(); // Refresh the page to get the latest data
     } catch (error) {
       toast.error("Something went wrong.");
     } finally {
@@ -127,6 +128,7 @@ const CategoryForm: React.FC<CategoryFormProps> = ({
       router.refresh(); // Refresh the page to get the latest data
       router.push(`/${params.storeId}/categories`);
       toast.success("Category deleted!");
+      router.refresh(); // Refresh the page to get the latest data
     } catch (error) {
       toast.error("Make sure you remove all products using this category first.");
     } finally {

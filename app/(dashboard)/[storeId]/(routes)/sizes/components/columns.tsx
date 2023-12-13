@@ -4,6 +4,9 @@ import { ColumnDef } from "@tanstack/react-table"
 import CellAction from "./cell-action"
 
 
+/**
+ * Represents a column in the sizes component.
+ */
 export type SizeColumn = {
   id: string
   name: string
@@ -11,6 +14,9 @@ export type SizeColumn = {
   createdAt: string
 }
 
+/**
+ * Represents the columns configuration for the sizes table.
+ */
 export const columns: ColumnDef<SizeColumn>[] = [
   {
     accessorKey: "name",

@@ -13,7 +13,7 @@ import ImageUpload from "@/components/ui/image-upload";
 import { Input } from "@/components/ui/input";
 
 
-import { Size } from "@prisma/client";
+import { Color } from "@prisma/client";
 import { Trash } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -27,30 +27,32 @@ import {
 } from "@/components/ui/form";
 import { useParams, useRouter } from "next/navigation";
 
-interface SizeFormProps {
-  initialSize: Size | null;
+interface ColorFormProps {
+  initialColor: Color | null;
 }
 
 // Add form schema here
 const formSchema = z.object({
   name: z.string().min(1),
-  value: z.string().min(1),
+  value: z.string().min(4).regex(/^#/, {
+    message: "Value must be a valid hex color code."
+  }),
 });
 
 // Infer the type of the form values
-type SizeFormValues = z.infer<typeof formSchema>;
+type ColorFormValues = z.infer<typeof formSchema>;
 
 
 /**
  * A form component for creating or updating a Size.
  * 
  * @component
- * @param {Size | null} initialSize - The initial Size object to populate the form with. If null, the form will be in create mode.
- * @returns {JSX.Element} The SizeForm component.
+ * @param {Size | null} initialColor - The initial Size object to populate the form with. If null, the form will be in create mode.
+ * @returns {JSX.Element} The ColorForm component.
  */
-const SizeForm: React.FC<SizeFormProps> = ({
-  initialSize, 
-}: SizeFormProps): JSX.Element => {
+const ColorForm: React.FC<ColorFormProps> = ({
+  initialColor, 
+}: ColorFormProps): JSX.Element => {
   const params = useParams();
   const router = useRouter();
  
@@ -59,22 +61,22 @@ const SizeForm: React.FC<SizeFormProps> = ({
   const [loading, setLoading] = useState(false); // Whether the form is loading
 
   // Add title, description, and separator
-  const title = initialSize ? "Update size" : "Create size";
-  const description = initialSize
-    ? "Edit your size"
-    : "Add a new size";
-  const toastMessage = initialSize
-    ? "Size updated."
-    : "Size created!";
-  const action = initialSize ? "Save" : "Create";
+  const title = initialColor ? "Update color" : "Create color";
+  const description = initialColor
+    ? "Edit your color"
+    : "Add a new color";
+  const toastMessage = initialColor
+    ? "Color updated."
+    : "Color created!";
+  const action = initialColor ? "Save" : "Create";
 
   /**
    * The form object used for managing settings form data.
    * @template T - The type of the form values.
    */
-  const form = useForm<SizeFormValues>({
+  const form = useForm<ColorFormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: initialSize || {
+    defaultValues: initialColor || {
       name: "",
       value: "",
     },
@@ -83,20 +85,20 @@ const SizeForm: React.FC<SizeFormProps> = ({
 
 
   /**
-   * Handles the form submission for creating or updating a size.
+   * Handles the form submission for creating or updating a color.
    * 
-   * @param values - The form values containing the size data.
+   * @param values - The form values containing the color data.
    */
-  const onSubmit = async (values: SizeFormValues) => {
+  const onSubmit = async (values: ColorFormValues) => {
     try {
       setLoading(true);
-      if (initialSize) { 
-        await axios.patch(`/api/${params.storeId}/sizes/${params.sizeId}`, values); 
+      if (initialColor) { 
+        await axios.patch(`/api/${params.storeId}/colors/${params.colorId}`, values); 
       } else {
-        await axios.post(`/api/${params.storeId}/sizes`, values);
+        await axios.post(`/api/${params.storeId}/colors`, values);
       } 
       router.refresh();
-      router.push(`/${params.storeId}/sizes`); // Redirect to the sizes page
+      router.push(`/${params.storeId}/colors`); // Redirect to the colors page
       toast.success(toastMessage);
       router.refresh(); // Refresh the page to get the latest data
     } catch (error) { 
@@ -108,19 +110,19 @@ const SizeForm: React.FC<SizeFormProps> = ({
 
 
   /**
-   * Deletes a size from the store.
-   * @returns A promise that resolves when the size is successfully deleted.
+   * Deletes a color from the store.
+   * @returns A promise that resolves when the color is successfully deleted.
    */
   const deleteStore = async (): Promise<void> => {
     try {
       setLoading(true); 
-      await axios.delete(`/api/${params.storeId}/sizes/${params.sizeId}`); 
+      await axios.delete(`/api/${params.storeId}/colors/${params.colorId}`); 
       router.refresh(); // Refresh the page to get the latest data
-      router.push(`/${params.storeId}/sizes`);
-      toast.success("Size deleted!");
+      router.push(`/${params.storeId}/colors`);
+      toast.success("Color deleted!");
       router.refresh(); // Refresh the page to get the latest data
     } catch (error) {
-      toast.error("Make sure you removed all products using this size first.");
+      toast.error("Make sure you removed all products using this color first.");
     } finally {
       setLoading(false);
       setOpen(false); // Close the modal
@@ -132,7 +134,7 @@ const SizeForm: React.FC<SizeFormProps> = ({
     <>
       {/*  Add delete modal here */}
       <AlertModal
-        label={initialSize?.name || ""}
+        label={initialColor?.name || ""}
         isOpen={open}
         onClose={() => setOpen(false)}
         onConfirm={deleteStore}
@@ -141,7 +143,7 @@ const SizeForm: React.FC<SizeFormProps> = ({
       <div className="flex items-center justify-between">
         <Heading title={title} description={description} />
 
-        {initialSize && ( // Only show the delete button if the store exists
+        {initialColor && ( // Only show the delete button if the store exists
           <Button
             disabled={loading}
             onClick={() => setOpen(true)}
@@ -170,7 +172,7 @@ const SizeForm: React.FC<SizeFormProps> = ({
                   <FormControl>
                     <Input
                       {...field}
-                      placeholder="Enter a size"
+                      placeholder="Enter a color"
                       disabled={loading}
                     />
                   </FormControl>
@@ -185,11 +187,14 @@ const SizeForm: React.FC<SizeFormProps> = ({
                 <FormItem>
                   <FormLabel>Value</FormLabel>
                   <FormControl>
-                    <Input
-                      {...field}
-                      placeholder="Enter a value"
-                      disabled={loading}
-                    />
+                    <div className="flex items-center gap-x-4">
+                      <Input
+                        {...field}
+                        placeholder="Enter a value, e.g, #7EC8E3"
+                        disabled={loading}
+                      />
+                      <div className="border p-4 rounded-full" style={{backgroundColor: field.value}} />
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -205,6 +210,6 @@ const SizeForm: React.FC<SizeFormProps> = ({
   );
 };
 
-export default SizeForm;
+export default ColorForm;
 
 

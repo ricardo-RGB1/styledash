@@ -97,12 +97,13 @@ const BillboardForm: React.FC<BillboardFormProps> = ({
       router.refresh();
       router.push(`/${params.storeId}/billboards`); // Redirect to the billboards page
       toast.success(toastMessage);
+      router.refresh(); // Refresh the page to get the latest data
     } catch (error) { 
       toast.error("Something went wrong.");
     } finally {
       setLoading(false);
     }
-  };
+  };  
 
 
   /**
@@ -116,6 +117,7 @@ const BillboardForm: React.FC<BillboardFormProps> = ({
       router.refresh(); // Refresh the page to get the latest data
       router.push(`/${params.storeId}/billboards`);
       toast.success("Billboard deleted!");
+      router.refresh(); // Refresh the page to get the latest data
     } catch (error) {
       toast.error("Make sure you removed all categories first.");
     } finally {
