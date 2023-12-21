@@ -25,6 +25,7 @@ const SizeClient: React.FC<SizeClientProps> = ({
 
     return (  
         <>
+            
             <div className="flex items-center justify-between">
                 <Heading
                     title={`Sizes (${data.length})`}
@@ -36,7 +37,7 @@ const SizeClient: React.FC<SizeClientProps> = ({
                     </Button>
             </div>
             <Separator />
-            <DataTable columns={columns} data={data} searchKey='name' />
+            <DataTable columns={columns} data={data} searchKey='name' /> 
             <Heading title="API" description="API calls for Sizes"  />
             <Separator />
             <ApiList entityName="sizes" entityIdName="sizeId" /> 
@@ -45,3 +46,7 @@ const SizeClient: React.FC<SizeClientProps> = ({
 }
  
 export default SizeClient;
+
+
+// DATA TABLE: 
+// The DataTable component receives the columns and data props. The columns prop is the columns array from columns.tsx. The data prop is the formattedSizes array from page.tsx. The searchKey prop is the name property of the data object. This is used to search the data array when the user types in the search input. 
