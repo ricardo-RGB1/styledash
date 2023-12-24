@@ -161,8 +161,8 @@ const SettingsForm: React.FC<SettingsFormProps> = ({
       <Separator />
       <ApiAlert
         title="NEXT_PUBLIC_API_URL"
-        description={`${origin}/api/stores/${params.storeId}}`} // Add the storeId to the URL
         variant="public"
+        description={`${origin}/api/${params.storeId}`}
       />
     </>
   );
