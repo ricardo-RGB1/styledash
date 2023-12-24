@@ -26,12 +26,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { useParams, useRouter } from "next/navigation";
+import { Checkbox } from "@/components/ui/checkbox";
 
 /**
  * Props for the ProductForm component.
@@ -85,61 +87,55 @@ const ProductForm: React.FC<ProductFormProps> = ({
   const [open, setOpen] = useState(false); // Whether the delete modal is open
   const [loading, setLoading] = useState(false); // Whether the form is loading
 
-  // Add title, description, and separator
-  const title = initialProduct ? "Update product" : "Create product";
-  const description = initialProduct
-    ? "Edit your product"
-    : "Add a new product";
-  const toastMessage = initialProduct ? "Product updated." : "Product created!";
-  const action = initialProduct ? "Save" : "Create";
 
-  /**
-   * Represents a form for creating or editing a product.
-   *
-   * @remarks
-   * This form uses the useForm hook from react-hook-form library.
-   *
-   * @param initialProduct - The initial product object to populate the form with.
-   * @returns The form object with resolver and default values.
-   */
+
+  const defaultValues = initialProduct ? {
+    ...initialProduct,
+    price: parseFloat(String(initialProduct?.price)),
+  } : {
+    name: '',
+    images: [],
+    price: 0,
+    categoryId: '',
+    colorId: '',
+    sizeId: '',
+    isFeatured: false,
+    isArchived: false,
+  }
+
   const form = useForm<ProductFormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: initialProduct
-      ? {
-          ...initialProduct, // Spread the initial product object
-          price: parseFloat(String(initialProduct?.price)), // Convert the price to a number
-        }
-      : {
-          // If there is no initial product, then use the default values
-          name: "",
-          images: [],
-          price: 0,
-          categoryId: "",
-          colorId: "",
-          sizeId: "",
-          isFeatured: false,
-          isArchived: false,
-        },
+    defaultValues
   });
 
+
+    // Add title, description, and separator and check if there is an initial product
+    const title = initialProduct ? "Update product" : "Create a product";
+    const description = initialProduct
+      ? "Edit your product"
+      : "Add a new product";
+    const toastMessage = initialProduct ? "Product updated!" : "Product created!";
+    const action = initialProduct ? "Save" : "Create";
+
+
   /**
-   * Handles the form submission for creating or updating a billboard.
-   *
-   * @param values - The form values containing the billboard data.
+   * Handles the form submission for creating or updating a product.
+   * 
+   * @param values - The form values containing the product data.
    */
   const onSubmit = async (values: ProductFormValues) => {
-    try {
+    try { // Try to create or update the product
       setLoading(true);
-      if (initialProduct) {
+      if (initialProduct) { // If there is an initial product, then update it
         await axios.patch(
-          `/api/${params.storeId}/billboards/${params.billboardId}`,
+          `/api/${params.storeId}/products/${params.productId}`, 
           values
         );
-      } else {
-        await axios.post(`/api/${params.storeId}/billboards`, values);
+      } else { // If there is no initial product, then create a new product and post it to the database 
+        await axios.post(`/api/${params.storeId}/products`, values);
       }
       router.refresh();
-      router.push(`/${params.storeId}/billboards`); // Redirect to the billboards page
+      router.push(`/${params.storeId}/products`); // Redirect to the products page
       toast.success(toastMessage);
       router.refresh(); // Refresh the page to get the latest data
     } catch (error) {
@@ -149,22 +145,23 @@ const ProductForm: React.FC<ProductFormProps> = ({
     }
   };
 
+  
   /**
-   * Deletes a billboard from the store.
-   * @returns A promise that resolves when the billboard is successfully deleted.
+   * Deletes the store.
+   * @returns A promise that resolves when the store is deleted.
    */
   const deleteStore = async (): Promise<void> => {
     try {
       setLoading(true);
       await axios.delete(
-        `/api/${params.storeId}/billboards/${params.billboardId}`
+        `/api/${params.storeId}/products/${params.productId}`
       );
       router.refresh(); // Refresh the page to get the latest data
-      router.push(`/${params.storeId}/billboards`);
-      toast.success("Billboard deleted!");
+      router.push(`/${params.storeId}/products`);
+      toast.success("Product deleted!");
       router.refresh(); // Refresh the page to get the latest data
     } catch (error) {
-      toast.error("Make sure you removed all categories first.");
+      toast.error("Something went wrong.");
     } finally {
       setLoading(false);
       setOpen(false); // Close the modal
@@ -330,6 +327,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
                 </FormItem>
               )}
             />
+
             <FormField
               control={form.control}
               name="colorId"
@@ -359,6 +357,50 @@ const ProductForm: React.FC<ProductFormProps> = ({
                     </SelectContent>
                   </Select>
                   <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="isFeatured"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                  <FormControl>
+                    <Checkbox
+                      checked={field.value}
+                      onCheckedChange={field.onChange} // The onChange handler is called with the new value of the checkbox
+                      />
+                  </FormControl>
+                  <div className="space-y-1 leading-none">
+                    <FormLabel>
+                      Featured
+                    </FormLabel>
+                    <FormDescription>
+                      This product will be featured on the home page.
+                    </FormDescription>
+                  </div>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="isArchived"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                  <FormControl>
+                    <Checkbox
+                      checked={field.value}
+                      onCheckedChange={field.onChange} // The onChange handler is called with the new value of the checkbox
+                      />
+                  </FormControl>
+                  <div className="space-y-1 leading-none">
+                    <FormLabel>
+                      Archived
+                    </FormLabel>
+                    <FormDescription>
+                      This product will not appear anywhere on the site.
+                    </FormDescription>
+                  </div>
                 </FormItem>
               )}
             />

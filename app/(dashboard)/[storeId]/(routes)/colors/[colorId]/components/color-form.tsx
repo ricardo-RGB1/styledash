@@ -120,7 +120,7 @@ const ColorForm: React.FC<ColorFormProps> = ({
       router.refresh(); // Refresh the page to get the latest data
       router.push(`/${params.storeId}/colors`);
       toast.success("Color deleted!");
-      router.refresh(); // Refresh the page to get the latest data
+      router.refresh(); 
     } catch (error) {
       toast.error("Make sure you removed all products using this color first.");
     } finally {

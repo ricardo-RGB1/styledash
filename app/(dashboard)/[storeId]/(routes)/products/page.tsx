@@ -27,18 +27,23 @@ const ProductsPage = async ({ params }: { params: { storeId: string } }) => {
   });
 
 
- 
-  const formattedProducts: ProductColumn[] = products.map((item) => ({
-    id: item.id,
-    name: item.name,
-    isFeatured: item.isFeatured,
-    isArchived: item.isArchived,
-    price: formatter.format(item.price.toNumber() / 100),
-    category: item.category.name,
-    size: item.category.name,
-    color: item.color.value,
-    createdAt: format(item.createdAt, "MMMM do, yyyy"),
-  })); 
+/**
+ * Formats the products array into a new array of ProductColumn objects.
+ * 
+ * @param products - The array of products to be formatted.
+ * @returns The formatted array of ProductColumn objects.
+ */
+const formattedProducts: ProductColumn[] = products.map((item) => ({
+  id: item.id,
+  name: item.name,
+  isFeatured: item.isFeatured,
+  isArchived: item.isArchived,
+  price: formatter.format(item.price.toNumber() / 100),
+  category: item.category.name,
+  size: item.size.name,
+  color: item.color.value,
+  createdAt: format(item.createdAt, "MMMM do, yyyy"),
+}));
 
   return (
     <div className="flex-col">
