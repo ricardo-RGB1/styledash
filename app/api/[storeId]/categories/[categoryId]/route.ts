@@ -20,10 +20,19 @@ export async function GET(
         return new NextResponse("Category id is required", { status: 400 });
       }
 
-      // find the category with the specified categoryId
-      const category = await prismadb.category.findUnique({ 
+    
+      /**
+       * Retrieves a category and its associated billboard from the database.
+       *
+       * @param params - The parameters for retrieving the category.
+       * @returns The category object with its associated billboard.
+       */
+      const category = await prismadb.category.findUnique({
         where: {
           id: params.categoryId
+        },
+        include: {
+          billboard: true
         }
       });
     
