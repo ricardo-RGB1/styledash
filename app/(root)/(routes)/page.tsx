@@ -4,7 +4,7 @@ import { useStoreModal } from "@/hooks/use-store-modal";
 import { useEffect } from "react";
 
 /**
- * Renders the setup page component.
+ * Renders the setup page component.  
  * Opens the modal if it is not already open.
  */
 const SetupPage = () => {
