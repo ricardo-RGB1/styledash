@@ -6,7 +6,7 @@ import axios from "axios";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import Heading from "@/components/ui/heading";
-import { Separator } from "@/components/ui/separator";
+import  Separator from "@/components/ui/separator";
 import { AlertModal } from "@/components/modals/alert-modal";
 import ImageUpload from "@/components/ui/image-upload";
 
