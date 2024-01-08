@@ -38,7 +38,7 @@ const formattedProducts: ProductColumn[] = products.map((item) => ({
   name: item.name,
   isFeatured: item.isFeatured,
   isArchived: item.isArchived,
-  price: formatter.format(item.price.toNumber() / 100),
+  price: formatter.format(item.price.toNumber()),
   category: item.category.name,
   size: item.size.name,
   color: item.color.value,
